@@ -635,7 +635,6 @@ import { useSignInWithEmailLink } from 'react-firebase-hooks/auth';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [
     signInWithEmailLink
     user,
@@ -666,11 +665,6 @@ const SignIn = () => {
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={() => signInWithEmailLink(email, emailLink)}>
         Sign In
