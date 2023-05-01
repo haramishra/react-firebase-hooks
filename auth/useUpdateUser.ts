@@ -6,6 +6,7 @@ import {
   updatePassword as fbUpdatePassword,
   updateProfile as fbUpdateProfile,
   verifyBeforeUpdateEmail as fbVerifyBeforeUpdateEmail,
+  confirmPasswordReset as fbConfirmPasswordReset,
 } from 'firebase/auth';
 import { useCallback, useState } from 'react';
 
@@ -31,6 +32,12 @@ export type VerifyBeforeUpdateEmailHook = UpdateUserHook<
     actionCodeSettings: ActionCodeSettings | null
   ) => Promise<boolean>
 >;
+
+export type ConfirmPasswordResetHook = [
+  (code: string, password: string) => Promise<boolean>,
+  boolean,
+  AuthError | Error | undefined
+];
 
 export const useUpdateEmail = (auth: Auth): UpdateEmailHook => {
   const [error, setError] = useState<AuthError>();
@@ -148,4 +155,30 @@ export const useVerifyBeforeUpdateEmail = (
   );
 
   return [verifyBeforeUpdateEmail, loading, error];
+};
+
+export const useConfirmPasswordReset = (
+  auth: Auth
+): ConfirmPasswordResetHook => {
+  const [error, setError] = useState<AuthError>();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const confirmPasswordReset = useCallback(
+    async (code: string, newPassword: string) => {
+      setLoading(true);
+      setError(undefined);
+      try {
+        await fbConfirmPasswordReset(auth, code, newPassword);
+        return true;
+      } catch (err) {
+        setError(err as AuthError);
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [auth]
+  );
+
+  return [confirmPasswordReset, loading, error];
 };

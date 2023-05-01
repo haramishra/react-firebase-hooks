@@ -39,5 +39,6 @@ export {
   useUpdateProfile,
   useVerifyBeforeUpdateEmail,
   VerifyBeforeUpdateEmailHook,
+  useConfirmPasswordReset
 } from './useUpdateUser';
 export { default as useIdToken, IdTokenHook } from './useIdToken';

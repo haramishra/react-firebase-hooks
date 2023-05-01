@@ -27,6 +27,7 @@ List of Auth hooks:
 - [useUpdateProfile](#useupdateprofile)
 - [useVerifyBeforeUpdateEmail](#useverifybeforeupdateemail)
 - [useSendPasswordResetEmail](#usesendpasswordresetemail)
+- [useConfirmPasswordReset](#useConfirmPasswordReset)
 - [useSendEmailVerification](#usesendemailverification)
 - [useSignOut](#usesignout)
 - [useDeleteUser](#usedeleteuser)
@@ -992,6 +993,62 @@ const SendPasswordReset = () => {
         }}
       >
         Reset password
+      </button>
+    </div>
+  );
+};
+```
+
+### useConfirmPasswordReset
+
+```js
+const [confirmPasswordReset, loading, error] = useConfirmPasswordReset(auth);
+```
+
+Completes the password reset process. Wraps the underlying `auth.confirmPasswordReset` method and provides additional `loading` and `error` information.
+
+The `useConfirmPasswordReset` hook takes the following parameters:
+
+- `auth`: `Auth` instance for the app you would like to monitor.
+
+Returns:
+
+- `confirmPasswordReset(code: string, newPassword: string) => Promise<boolean>`: A function you can call to confirm the new password set by the user. Returns `true` if the function was successful, or `false` if there was an error.
+- `loading`: A `boolean` to indicate whether the new password being set
+- `error`: Any `Error` returned by Firebase when trying to set new apssword, or `undefined` if there is no error
+
+#### Full Example
+
+```jsx
+import { useConfirmPasswordReset } from 'react-firebase-hooks/auth';
+
+const resetPassword = () => {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPasswordReset, loading, error] = useConfirmPasswordReset(auth);
+
+  const code = new URLSearchParams(window.location.search).get('oobCode');
+
+  if (error) {
+    return (
+      <div>
+        <p>Error: {error.message}</p>
+      </div>
+    );
+  }
+  if (loading) {
+    return <p>loading...</p>;
+  }
+  return (
+    <div className="App">
+      <button
+        onClick={async () => {
+          const success = await useConfirmPasswordReset(code, newPassword);
+          if (success) {
+            alert('password changed Successfully');
+          }
+        }}
+      >
+        Change password
       </button>
     </div>
   );
